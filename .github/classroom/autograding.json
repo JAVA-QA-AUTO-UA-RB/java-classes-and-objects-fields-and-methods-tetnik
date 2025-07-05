@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Compiles and exits with code 0",
+      "setup": "javac -d bin $(find . -name '*.java')",
+      "run": "java -cp bin Main",
+      "input": "",
+      "output": "",
+      "comparison": "exact",
+      "timeout": 10,
+      "points": 100
+    }
+  ]
+}
