@@ -30,7 +30,7 @@ public class Main {
             round++;
         }
 
-        // Визначаємо переможця або нічию
+
         int aliveCount = countAlive(heroes);
         if (aliveCount == 1) {
             for (SuperHero hero : heroes) {
