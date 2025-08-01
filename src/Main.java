@@ -6,33 +6,40 @@ public class Main {
         SuperHero ironMan = new SuperHero("Залізна Людина", 35, 20, "Ракетний залп");
         SuperHero cap = new SuperHero("Капітан Америка", 25, 15, "Щитовий Блок");
 
-        SuperHero[] heroes = { flash, ironMan, cap };
+        SuperHero[] heroes = {flash, ironMan, cap};
         int round = 1;
         int maxRounds = 9;
 
-        System.out.println("Початок битви між 3 супергероями! Максимум раундів: " + maxRounds + "\n");
+        System.out.println("Початок битви між " + heroes.length + " супергероями! Максимум раундів: " + maxRounds + ":\n");
 
         while (countAlive(heroes) > 1 && round <= maxRounds) {
-            System.out.println("➡️ Раунд " + round + ":");
+            System.out.println("➡️ Починається Раунд " + round + ":");
 
-            for (SuperHero attacker : heroes) {
-                if (!attacker.isAlive()) continue;
+            // Choosing current attacker and his opponent
+            SuperHero currentAttacker = null;
+            SuperHero currentOpponent = null;
 
-                SuperHero target = chooseRandomOpponent(attacker, heroes);
-                if (target == null) continue;
-
-                attacker.applyRandomBuff();
-                attacker.attack(target);
-                System.out.println(target.getName() + " має залишок здоров'я: " + target.getHealth());
-                System.out.println();
+            for (SuperHero h : heroes) {
+                if (h.isAlive()) {
+                    currentAttacker = h;
+                    currentOpponent = chooseRandomOpponent(h, heroes);
+                    break;
+                }
             }
+
+            currentAttacker.applyRandomBuff();
+            currentOpponent.applyRandomBuff();
+
+            currentAttacker.attack(currentOpponent);
+            if (currentOpponent.isAlive()) {
+                currentOpponent.attack(currentAttacker);
+            }
+
 
             round++;
         }
 
-
-        int aliveCount = countAlive(heroes);
-        if (aliveCount == 1) {
+        if (countAlive(heroes) == 1) {
             for (SuperHero hero : heroes) {
                 if (hero.isAlive()) {
                     System.out.println("🏆 Переможець: " + hero.getName() + "!");
@@ -41,28 +48,27 @@ public class Main {
             }
         } else {
             System.out.println("Битва завершилась нічиєю після " + maxRounds + " раундів!");
+            System.out.println("Вижили такі герої!");
+            for (SuperHero hero : heroes) {
+                hero.printStatus();
+            }
         }
     }
-
     private static int countAlive(SuperHero[] heroes) {
         int count = 0;
-        for (SuperHero h : heroes) {
-            if (h.isAlive()) count++;
+        for (SuperHero hero : heroes) {
+            if (hero.isAlive()) {
+                count++;
+            }
         }
         return count;
     }
-
     private static SuperHero chooseRandomOpponent(SuperHero attacker, SuperHero[] heroes) {
-        java.util.List<SuperHero> opponents = new java.util.ArrayList<>();
-        for (SuperHero h : heroes) {
-            if (h != attacker && h.isAlive()) {
-                opponents.add(h);
-            }
-        }
-
-        if (opponents.isEmpty()) return null;
-
-        int index = (int) (Math.random() * opponents.size());
-        return opponents.get(index);
+        Random rand = new Random();
+        SuperHero opponent;
+        do {
+            opponent = heroes[rand.nextInt(heroes.length)];
+        } while (!opponent.isAlive() || opponent == attacker);
+        return opponent;
     }
 }
